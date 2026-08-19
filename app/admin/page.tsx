@@ -108,7 +108,7 @@ export default function AdminDashboardPage() {
     await fetch('/api/admin/logout', { method: 'POST' })
     // hard navigation — avoids any stale client-router cache carrying over
     // the just-cleared session state
-    window.location.href = '/admin/login'
+    window.location.href = '/'
   }
 
   async function handleSaveGuest(values: GuestFormValues) {

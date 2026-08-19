@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { CheckCircle, Users, ChevronDown } from 'lucide-react'
+import confetti from 'canvas-confetti'
 
 interface FormData {
   name:       string
@@ -16,6 +17,15 @@ const INITIAL: FormData = {
   name:       '',
   attendance: '',
   plusOne:    0,
+}
+
+function fireConfetti() {
+  const colors = ['#FFE4C4', '#C9995F', '#5E2A2E', '#FDFBF7']
+  const shared = { colors, disableForReducedMotion: true }
+
+  confetti({ ...shared, particleCount: 80, spread: 70, origin: { x: 0.2, y: 0.6 } })
+  confetti({ ...shared, particleCount: 80, spread: 70, origin: { x: 0.8, y: 0.6 } })
+  confetti({ ...shared, particleCount: 60, spread: 100, startVelocity: 45, origin: { x: 0.5, y: 0.5 } })
 }
 
 function SuccessModal({ name, onClose }: { name: string; onClose: () => void }) {
@@ -97,6 +107,7 @@ export default function RSVPSection() {
         }),
       })
       if (!res.ok) throw new Error('request failed')
+      if (form.attendance === 'yes') fireConfetti()
       setSubmitted(true)
     } catch {
       setSubmitError('Ինչ-որ բան այն չգնաց։ Խնդրում ենք փորձել կրկին։')

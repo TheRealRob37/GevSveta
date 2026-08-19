@@ -1,7 +1,29 @@
+# dependencies
 node_modules
+
+# build output
 .next
 out
+dist
+build
+
+# env / secrets
+.env
 .env*.local
+
+# next.js generated
 next-env.d.ts
+
+# app data
 data/*.json
-public/photos/IMG_3720.JPG
+
+# logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor/tooling
+.vercel

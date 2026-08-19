@@ -2,11 +2,17 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { COUPLE_NAMES, EVENT_TITLE, EVENT_DATE_DISPLAY, VENUE_LOCATION } from '@/lib/constants'
 
-// Vercel sets VERCEL_URL on every deployment — production and previews
-// alike — so absolute URLs (OG/Twitter images) always resolve against the
-// deployment actually serving the page, rather than a hardcoded domain
-// that would be wrong on preview links.
-const SITE_URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
+// VERCEL_URL points at the per-deployment hash URL, which Vercel's
+// Deployment Protection gates behind an SSO login — external crawlers
+// (Telegram, etc.) can't fetch anything from it, breaking link previews.
+// gevsveta.com is the verified custom domain (exempt from that gate), so
+// production always uses it directly; previews fall back to VERCEL_URL.
+const PRODUCTION_URL = 'https://www.gevsveta.com'
+const SITE_URL = process.env.VERCEL_ENV === 'production'
+  ? PRODUCTION_URL
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000'
 
 export const viewport: Viewport = {
   width: 'device-width',

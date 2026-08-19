@@ -264,7 +264,6 @@ export default function AdminDashboardPage() {
                     <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light">Անուն</th>
                     <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light">Կարգավիճակ</th>
                     <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light">Հյուրեր</th>
-                    <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light">Ամսաթիվ</th>
                     <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light text-right">Գործողություններ</th>
                   </tr>
                 </thead>
@@ -289,9 +288,6 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="px-6 py-4 font-lato text-sm text-charcoal-light">
                         {entry.status === 'attending' ? entry.guests : '—'}
-                      </td>
-                      <td className="px-6 py-4 font-lato text-xs text-charcoal-light">
-                        {new Date(entry.submittedAt).toLocaleString('hy-AM')}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
@@ -331,8 +327,7 @@ export default function AdminDashboardPage() {
               <tr>
                 <th className="border-b border-charcoal/20 py-2 pr-4 text-xs uppercase tracking-widest text-charcoal-light">Անուն</th>
                 <th className="border-b border-charcoal/20 py-2 pr-4 text-xs uppercase tracking-widest text-charcoal-light">Կարգավիճակ</th>
-                <th className="border-b border-charcoal/20 py-2 pr-4 text-xs uppercase tracking-widest text-charcoal-light">Հյուրեր</th>
-                <th className="border-b border-charcoal/20 py-2 text-xs uppercase tracking-widest text-charcoal-light">Ամսաթիվ</th>
+                <th className="border-b border-charcoal/20 py-2 text-xs uppercase tracking-widest text-charcoal-light">Հյուրեր</th>
               </tr>
             </thead>
             <tbody>
@@ -342,11 +337,8 @@ export default function AdminDashboardPage() {
                   <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">
                     {entry.status === 'attending' ? 'Ներկա կլինի' : 'Չի կարող'}
                   </td>
-                  <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">
-                    {entry.status === 'attending' ? entry.guests : '—'}
-                  </td>
                   <td className="border-b border-charcoal/10 py-2 text-sm text-charcoal">
-                    {new Date(entry.submittedAt).toLocaleString('hy-AM')}
+                    {entry.status === 'attending' ? entry.guests : '—'}
                   </td>
                 </tr>
               ))}

@@ -1,0 +1,7 @@
+node_modules
+.next
+out
+.env*.local
+next-env.d.ts
+data/*.json
+public/photos/IMG_3720.JPG

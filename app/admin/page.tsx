@@ -88,28 +88,36 @@ export default function AdminDashboardPage() {
   const [exporting, setExporting] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
   const loggingOut = useRef(false)
+  const mounted = useRef(true)
 
   const load = useCallback(async () => {
     try {
       const res = await fetch('/api/rsvp', { cache: 'no-store' })
+      if (!mounted.current) return
       if (res.status === 401) {
         if (!loggingOut.current) router.push('/admin/login')
         return
       }
       if (!res.ok) throw new Error('failed')
-      setEntries(await res.json())
+      const data = await res.json()
+      if (!mounted.current) return
+      setEntries(data)
       setError('')
     } catch {
-      setError('Հնարավոր չէ բեռնել տվյալները')
+      if (mounted.current) setError('Հնարավոր չէ բեռնել տվյալները')
     } finally {
-      setLoading(false)
+      if (mounted.current) setLoading(false)
     }
   }, [router])
 
   useEffect(() => {
+    mounted.current = true
     load()
     const id = setInterval(load, POLL_INTERVAL_MS)
-    return () => clearInterval(id)
+    return () => {
+      mounted.current = false
+      clearInterval(id)
+    }
   }, [load])
 
   async function handleLogout() {
@@ -132,6 +140,7 @@ export default function AdminDashboardPage() {
       body:    JSON.stringify(values),
     })
     if (!res.ok) throw new Error('save failed')
+    if (!mounted.current) return
     setModalGuest(null)
     await load()
   }
@@ -143,7 +152,7 @@ export default function AdminDashboardPage() {
       const res = await fetch(`/api/admin/guests/${entry.id}`, { method: 'DELETE' })
       if (res.ok) await load()
     } finally {
-      setBusyId(null)
+      if (mounted.current) setBusyId(null)
     }
   }
 
@@ -157,7 +166,7 @@ export default function AdminDashboardPage() {
       })
       if (res.ok) await load()
     } finally {
-      setBusyId(null)
+      if (mounted.current) setBusyId(null)
     }
   }
 
@@ -167,7 +176,7 @@ export default function AdminDashboardPage() {
     try {
       await exportGuestListPdf(printRef.current)
     } finally {
-      setExporting(false)
+      if (mounted.current) setExporting(false)
     }
   }
 

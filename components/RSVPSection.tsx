@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
@@ -81,6 +81,12 @@ export default function RSVPSection() {
 
   const titleRef = useRef(null)
   const titleInView = useInView(titleRef, { once: true, amount: 0.2 })
+  const mounted = useRef(true)
+
+  useEffect(() => {
+    mounted.current = true
+    return () => { mounted.current = false }
+  }, [])
 
   const set = <K extends keyof FormData>(key: K, value: FormData[K]) =>
     setForm(prev => ({ ...prev, [key]: value }))
@@ -111,12 +117,13 @@ export default function RSVPSection() {
         }),
       })
       if (!res.ok) throw new Error('request failed')
+      if (!mounted.current) return
       if (form.attendance === 'yes') fireConfetti()
       setSubmitted(true)
     } catch {
-      setSubmitError('Ինչ-որ բան այն չգնաց։ Խնդրում ենք փորձել կրկին։')
+      if (mounted.current) setSubmitError('Ինչ-որ բան այն չգնաց։ Խնդրում ենք փորձել կրկին։')
     } finally {
-      setLoading(false)
+      if (mounted.current) setLoading(false)
     }
   }
 

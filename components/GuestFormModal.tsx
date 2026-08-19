@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import type { GuestStatus, GuestSide, RsvpEntry } from '@/lib/rsvpStore'
@@ -25,6 +25,12 @@ export default function GuestFormModal({ guest, onSave, onClose }: {
   })
   const [saving, setSaving] = useState(false)
   const [error, setError]   = useState('')
+  const mounted = useRef(true)
+
+  useEffect(() => {
+    mounted.current = true
+    return () => { mounted.current = false }
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -37,9 +43,9 @@ export default function GuestFormModal({ guest, onSave, onClose }: {
     try {
       await onSave(values)
     } catch {
-      setError('Չհաջողվեց պահպանել։ Փորձեք կրկին։')
+      if (mounted.current) setError('Չհաջողվեց պահպանել։ Փորձեք կրկին։')
     } finally {
-      setSaving(false)
+      if (mounted.current) setSaving(false)
     }
   }
 

@@ -22,6 +22,13 @@ export const viewport: Viewport = {
 const PAGE_TITLE = `Սիրով հրավիրում ենք — ${COUPLE_NAMES}`
 const PAGE_DESCRIPTION = `${EVENT_DATE_DISPLAY} • ${VENUE_LOCATION} — ${COUPLE_NAMES} ${EVENT_TITLE.toLowerCase()}`
 
+// A version tag on the image URL — bump this whenever og-image.jpg changes.
+// Chat apps (Telegram, WhatsApp/Meta) cache link previews per-URL, so an
+// unversioned image URL can keep serving a stale preview indefinitely even
+// after the file itself is fixed.
+const OG_IMAGE_VERSION = 2
+const OG_IMAGE_URL = `/og-image.jpg?v=${OG_IMAGE_VERSION}`
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: PAGE_TITLE,
@@ -32,7 +39,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-image.jpg',
+        url: OG_IMAGE_URL,
         width: 1200,
         height: 630,
         alt: PAGE_TITLE,
@@ -43,7 +50,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: PAGE_TITLE,
     description: PAGE_DESCRIPTION,
-    images: ['/og-image.jpg'],
+    images: [OG_IMAGE_URL],
   },
   icons: {
     icon: [

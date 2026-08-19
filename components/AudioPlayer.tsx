@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { VolumeX } from 'lucide-react'
 
 const EQUALIZER_BARS = [0, 1, 2, 3]
+const INTRO_SKIP_SECONDS = 9
 
 export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -13,6 +14,23 @@ export default function AudioPlayer() {
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
+
+    // Skip the first 10s of the track. Set on 'loadedmetadata' rather than
+    // immediately — currentTime writes are ignored/unreliable before the
+    // browser knows the track's duration.
+    const skipIntro = () => {
+      if (audio.currentTime < INTRO_SKIP_SECONDS) audio.currentTime = INTRO_SKIP_SECONDS
+    }
+    if (audio.readyState >= 1) skipIntro()
+    else audio.addEventListener('loadedmetadata', skipIntro, { once: true })
+
+    // no native `loop` attribute — looping natively would replay the
+    // skipped intro every time, so restart from the same offset instead
+    const onEnded = () => {
+      audio.currentTime = INTRO_SKIP_SECONDS
+      audio.play().catch(() => {})
+    }
+    audio.addEventListener('ended', onEnded)
 
     // autoplay blocked — resume on the first user interaction
     const resume = () => {
@@ -34,6 +52,8 @@ export default function AudioPlayer() {
       window.removeEventListener('click', resume)
       window.removeEventListener('touchstart', resume)
       window.removeEventListener('scroll', resume)
+      audio.removeEventListener('loadedmetadata', skipIntro)
+      audio.removeEventListener('ended', onEnded)
       audio.removeEventListener('play', onPlay)
       audio.removeEventListener('pause', onPause)
     }
@@ -48,7 +68,7 @@ export default function AudioPlayer() {
 
   return (
     <>
-      <audio ref={audioRef} src="/audio/bg-music.mp3" loop preload="auto" />
+      <audio ref={audioRef} src="/audio/bg-music.mp3" preload="auto" />
 
       <motion.button
         onClick={toggle}

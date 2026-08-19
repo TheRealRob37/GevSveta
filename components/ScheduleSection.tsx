@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { UtensilsCrossed, MapPin, Clock, ExternalLink } from 'lucide-react'
+import { UtensilsCrossed, MapPin, Clock, Map } from 'lucide-react'
 import { VENUE_NAME, VENUE_ADDRESS, VENUE_MAP_URL, VENUE_TIME } from '@/lib/constants'
 
 function useReveal(threshold = 0.15) {
@@ -18,7 +18,7 @@ const EVENT = {
   label:   'Ընթրիք',
   title:   VENUE_NAME,
   address: VENUE_ADDRESS,
-  note:    'Ընթրիք, պար եւ տոնախմբություն',
+  note:    'Տոնական երեկո, ջերմ մթնոլորտ և բարձր տրամադրություն',
   mapUrl:  VENUE_MAP_URL,
 }
 
@@ -131,7 +131,7 @@ export default function ScheduleSection() {
           className="flex flex-col sm:flex-row items-stretch gap-6"
         >
           {/* venue card */}
-          <div className="flex-1 card-elegant border-gold/30 border p-7 sm:p-8">
+          <div className="flex-1 card-elegant rounded-2xl shadow-md border border-amber-200/40 p-7 sm:p-8">
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-gold/10 text-gold-dark">
                 <Icon className="w-5 h-5" />
@@ -140,29 +140,29 @@ export default function ScheduleSection() {
                 <span className="font-lato text-[11px] tracking-widest uppercase px-2.5 py-0.5 rounded-full bg-gold/10 text-gold-dark">
                   {EVENT.label}
                 </span>
-                <h3 className="font-playfair text-xl sm:text-2xl text-charcoal mt-2 mb-1 leading-snug">
+                <h3 className="font-playfair text-xl sm:text-2xl text-charcoal mt-2 mb-2 leading-snug">
                   {EVENT.title}
                 </h3>
-                <p className="font-cormorant italic text-charcoal-light text-base mb-1">
+                <p className="font-cormorant italic text-charcoal-light text-base mb-4 leading-relaxed">
                   {EVENT.note}
                 </p>
 
-                <div className="flex items-center gap-1.5 text-charcoal-light text-sm mt-3 mb-1">
+                <div className="flex items-center gap-1.5 text-charcoal-light text-sm mb-2.5">
                   <MapPin className="w-3.5 h-3.5 text-gold flex-shrink-0" />
                   <span className="font-lato text-xs">{EVENT.address}</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-charcoal-light mb-4">
-                  <Clock className="w-3.5 h-3.5 text-gold flex-shrink-0" />
-                  <span className="font-lato text-xs">Ժամը {EVENT.time}-ին</span>
+                <div className="flex items-center gap-1.5 text-charcoal mb-5">
+                  <Clock className="w-4 h-4 text-gold-dark flex-shrink-0" />
+                  <span className="font-lato text-base font-bold">Ժամը {EVENT.time}-ին</span>
                 </div>
 
                 <a
                   href={EVENT.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-lato tracking-wider uppercase border rounded-full px-4 py-2 transition-all duration-300 border-gold/40 text-gold-dark hover:bg-gold hover:text-charcoal hover:border-gold"
+                  className="inline-flex items-center gap-2 text-xs font-lato font-semibold tracking-wider uppercase rounded-full px-5 py-2.5 transition-all duration-300 bg-gold/15 text-gold-dark hover:bg-gold hover:text-charcoal shadow-sm"
                 >
-                  <ExternalLink className="w-3 h-3" />
+                  <Map className="w-3.5 h-3.5" />
                   Բացել Քարտեզում
                 </a>
               </div>

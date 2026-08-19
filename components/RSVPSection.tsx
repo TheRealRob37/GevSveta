@@ -8,17 +8,25 @@ import { CheckCircle, Users, ChevronDown } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
 interface FormData {
-  name:       string
+  names:      string[]
   guestSide:  'gevorg' | 'sveta' | ''
   attendance: 'yes' | 'no' | ''
   plusOne:    number
 }
 
 const INITIAL: FormData = {
-  name:       '',
+  names:      [''],
   guestSide:  '',
   attendance: '',
   plusOne:    0,
+}
+
+// One full-name field per guest — if attending with a plus-one count, resize
+// the names array to match while preserving whatever was already typed.
+function resizeNames(names: string[], count: number): string[] {
+  const next = names.slice(0, count)
+  while (next.length < count) next.push('')
+  return next
 }
 
 function fireConfetti() {
@@ -30,7 +38,8 @@ function fireConfetti() {
   confetti({ ...shared, particleCount: 60, spread: 100, startVelocity: 45, origin: { x: 0.5, y: 0.5 } })
 }
 
-function SuccessModal({ name, onClose }: { name: string; onClose: () => void }) {
+function SuccessModal({ names, onClose }: { names: string[]; onClose: () => void }) {
+  const name = names[0]?.trim() || ''
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -91,9 +100,33 @@ export default function RSVPSection() {
   const set = <K extends keyof FormData>(key: K, value: FormData[K]) =>
     setForm(prev => ({ ...prev, [key]: value }))
 
+  function setName(index: number, value: string) {
+    setForm(prev => {
+      const names = [...prev.names]
+      names[index] = value
+      return { ...prev, names }
+    })
+  }
+
+  function setAttendance(value: 'yes' | 'no') {
+    setForm(prev => ({
+      ...prev,
+      attendance: value,
+      names: resizeNames(prev.names, value === 'yes' ? prev.plusOne + 1 : 1),
+    }))
+  }
+
+  function setPlusOne(value: number) {
+    setForm(prev => ({
+      ...prev,
+      plusOne: value,
+      names: resizeNames(prev.names, value + 1),
+    }))
+  }
+
   function validate(): boolean {
     const e: Partial<Record<keyof FormData, string>> = {}
-    if (!form.name.trim())  e.name       = 'Խնդրում ենք մուտքագրել Ձեր անունը'
+    if (form.names.some(n => !n.trim())) e.names = 'Խնդրում ենք մուտքագրել բոլոր հյուրերի անուն ազգանունը'
     if (!form.guestSide)    e.guestSide  = 'Խնդրում ենք ընտրել՝ ում հյուրն եք'
     if (!form.attendance)   e.attendance = 'Խնդրում ենք ընտրել Ձեր մասնակցությունը'
     setErrors(e)
@@ -110,7 +143,7 @@ export default function RSVPSection() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:       form.name.trim(),
+          name:       form.names.map(n => n.trim()).join(', '),
           guestSide:  form.guestSide,
           attendance: form.attendance,
           guests:     form.attendance === 'yes' ? form.plusOne + 1 : 0,
@@ -136,7 +169,7 @@ export default function RSVPSection() {
   return (
     <>
       <AnimatePresence>
-        {submitted && <SuccessModal name={form.name} onClose={handleClose} />}
+        {submitted && <SuccessModal names={form.names} onClose={handleClose} />}
       </AnimatePresence>
 
       <section className="relative py-24 sm:py-32 bg-ivory overflow-hidden" id="rsvp">
@@ -176,23 +209,6 @@ export default function RSVPSection() {
               className="card-elegant border border-gold/20 p-8 sm:p-10 space-y-6"
               noValidate
             >
-              {/* name */}
-              <div>
-                <label className="block font-lato text-xs tracking-widest uppercase text-charcoal-light mb-2">
-                  Անուն Ազգանուն <span className="text-burgundy">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={e => set('name', e.target.value)}
-                  placeholder="Ձեր Անուն Ազգանունը"
-                  className={`input-elegant ${errors.name ? 'border-burgundy focus:border-burgundy focus:ring-burgundy/20' : ''}`}
-                />
-                {errors.name && (
-                  <p className="mt-1.5 text-xs text-burgundy font-lato">{errors.name}</p>
-                )}
-              </div>
-
               {/* guest side */}
               <div>
                 <label className="block font-lato text-xs tracking-widest uppercase text-charcoal-light mb-3">
@@ -236,7 +252,7 @@ export default function RSVPSection() {
                     <button
                       key={opt.value}
                       type="button"
-                      onClick={() => set('attendance', opt.value)}
+                      onClick={() => setAttendance(opt.value)}
                       className={`px-4 py-3.5 rounded-xl border text-sm font-lato transition-all duration-200 flex items-center justify-center gap-2 ${
                         form.attendance === opt.value
                           ? opt.value === 'yes'
@@ -267,12 +283,12 @@ export default function RSVPSection() {
                   >
                     <label className="block font-lato text-xs tracking-widest uppercase text-charcoal-light mb-2">
                       <Users className="inline w-3.5 h-3.5 mr-1.5 text-gold" />
-                      Հյուրերի Թիվ (Ձեզ ներառյալ)
+                      Հյուրերի Քանակ
                     </label>
                     <div className="relative">
                       <select
                         value={form.plusOne}
-                        onChange={e => set('plusOne', Number(e.target.value))}
+                        onChange={e => setPlusOne(Number(e.target.value))}
                         className="input-elegant appearance-none pr-10"
                       >
                         {[1, 2, 3, 4, 5].map(n => (
@@ -283,6 +299,55 @@ export default function RSVPSection() {
                       </select>
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-light pointer-events-none" />
                     </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* guest names — one full-name field per person, count driven
+                  by attendance + guest count above */}
+              <AnimatePresence>
+                {form.attendance !== '' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <label className="block font-lato text-xs tracking-widest uppercase text-charcoal-light mb-3">
+                      {form.names.length > 1 ? 'Հյուրերի Անուն Ազգանունը' : 'Անուն Ազգանուն'}
+                      <span className="text-burgundy"> *</span>
+                    </label>
+                    <div className="space-y-3">
+                      <AnimatePresence initial={false}>
+                        {form.names.map((n, i) => (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.25 }}
+                            className="relative"
+                          >
+                            {form.names.length > 1 && (
+                              <span className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-gold/20 text-gold-dark text-[11px] font-lato font-semibold flex items-center justify-center pointer-events-none">
+                                {i + 1}
+                              </span>
+                            )}
+                            <input
+                              type="text"
+                              value={n}
+                              onChange={e => setName(i, e.target.value)}
+                              placeholder="Անուն Ազգանուն"
+                              className={`input-elegant ${form.names.length > 1 ? 'pl-11' : ''} ${errors.names ? 'border-burgundy focus:border-burgundy focus:ring-burgundy/20' : ''}`}
+                            />
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                    {errors.names && (
+                      <p className="mt-1.5 text-xs text-burgundy font-lato">{errors.names}</p>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

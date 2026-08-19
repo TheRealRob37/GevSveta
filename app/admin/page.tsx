@@ -20,6 +20,23 @@ const SIDE_LABEL: Record<GuestSide, string> = {
   sveta:  '👰🏻‍♀️ Սվետայի',
 }
 
+// Multi-guest entries store one comma-joined string ("John Doe, Jane Doe")
+// — render each name on its own line instead of the raw comma string.
+function GuestNames({ name }: { name: string }) {
+  const names = name.split(',').map(n => n.trim()).filter(Boolean)
+  if (names.length <= 1) return <>{name}</>
+  return (
+    <div className="space-y-0.5">
+      {names.map((n, i) => (
+        <div key={i} className="flex items-center gap-1.5">
+          <span className="text-[10px] text-gold-dark font-semibold">{i + 1}.</span>
+          <span>{n}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function StatCard({ label, value, icon: Icon, tone }: {
   label: string; value: number; icon: typeof Users; tone: 'sage' | 'burgundy' | 'gold'
 }) {
@@ -317,7 +334,9 @@ export default function AdminDashboardPage() {
                 <tbody>
                   {[...filtered].reverse().map(entry => (
                     <tr key={entry.id} className="border-b border-gold/10 last:border-0">
-                      <td className="px-6 py-4 font-lato text-sm text-charcoal">{entry.name}</td>
+                      <td className="px-6 py-4 font-lato text-sm text-charcoal">
+                        <GuestNames name={entry.name} />
+                      </td>
                       <td className="px-6 py-4 font-lato text-sm text-charcoal-light">{SIDE_LABEL[entry.guestSide]}</td>
                       <td className="px-6 py-4">
                         <select
@@ -382,7 +401,9 @@ export default function AdminDashboardPage() {
             <tbody>
               {[...filtered].reverse().map(entry => (
                 <tr key={entry.id}>
-                  <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">{entry.name}</td>
+                  <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">
+                    <GuestNames name={entry.name} />
+                  </td>
                   <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">{SIDE_LABEL[entry.guestSide]}</td>
                   <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">
                     {entry.status === 'attending' ? 'Ներկա կլինի' : 'Չի կարող'}

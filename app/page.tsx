@@ -5,6 +5,7 @@ import WelcomeSection from '@/components/WelcomeSection'
 import ScheduleSection from '@/components/ScheduleSection'
 import RSVPSection    from '@/components/RSVPSection'
 import FooterSection  from '@/components/FooterSection'
+import AudioPlayer    from '@/components/AudioPlayer'
 
 export default function EngagementPage() {
   return (
@@ -14,6 +15,7 @@ export default function EngagementPage() {
       <ScheduleSection />
       <RSVPSection />
       <FooterSection />
+      <AudioPlayer />
     </main>
   )
 }

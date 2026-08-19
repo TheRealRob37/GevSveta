@@ -3,17 +3,19 @@ import path from 'path'
 import { Redis } from '@upstash/redis'
 
 export type GuestStatus = 'attending' | 'declined'
+export type GuestSide = 'gevorg' | 'sveta'
 
 export interface RsvpEntry {
   id:          string
   name:        string
   status:      GuestStatus
   guests:      number
+  guestSide:   GuestSide
   submittedAt: string
   updatedAt:   string
 }
 
-export type GuestPatch = Partial<Pick<RsvpEntry, 'name' | 'status' | 'guests'>>
+export type GuestPatch = Partial<Pick<RsvpEntry, 'name' | 'status' | 'guests' | 'guestSide'>>
 
 const REDIS_KEY = 'rsvps' // hash: id -> RsvpEntry
 

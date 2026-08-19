@@ -9,15 +9,17 @@ export async function POST(req: NextRequest) {
     !body ||
     typeof body.name !== 'string' || !body.name.trim() ||
     (body.attendance !== 'yes' && body.attendance !== 'no') ||
-    typeof body.guests !== 'number'
+    typeof body.guests !== 'number' ||
+    (body.guestSide !== 'gevorg' && body.guestSide !== 'sveta')
   ) {
     return NextResponse.json({ error: 'invalid payload' }, { status: 400 })
   }
 
   const entry = await addRsvp({
-    name:   body.name.trim(),
-    status: body.attendance === 'yes' ? 'attending' : 'declined',
-    guests: body.attendance === 'yes' ? Math.max(1, body.guests) : 0,
+    name:      body.name.trim(),
+    status:    body.attendance === 'yes' ? 'attending' : 'declined',
+    guests:    body.attendance === 'yes' ? Math.max(1, body.guests) : 0,
+    guestSide: body.guestSide,
   })
 
   return NextResponse.json(entry, { status: 201 })

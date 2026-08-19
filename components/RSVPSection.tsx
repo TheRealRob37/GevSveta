@@ -9,12 +9,14 @@ import confetti from 'canvas-confetti'
 
 interface FormData {
   name:       string
+  guestSide:  'gevorg' | 'sveta' | ''
   attendance: 'yes' | 'no' | ''
   plusOne:    number
 }
 
 const INITIAL: FormData = {
   name:       '',
+  guestSide:  '',
   attendance: '',
   plusOne:    0,
 }
@@ -86,6 +88,7 @@ export default function RSVPSection() {
   function validate(): boolean {
     const e: Partial<Record<keyof FormData, string>> = {}
     if (!form.name.trim())  e.name       = 'Խնդրում ենք մուտքագրել Ձեր անունը'
+    if (!form.guestSide)    e.guestSide  = 'Խնդրում ենք ընտրել՝ ում հյուրն եք'
     if (!form.attendance)   e.attendance = 'Խնդրում ենք ընտրել Ձեր մասնակցությունը'
     setErrors(e)
     return Object.keys(e).length === 0
@@ -102,6 +105,7 @@ export default function RSVPSection() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name:       form.name.trim(),
+          guestSide:  form.guestSide,
           attendance: form.attendance,
           guests:     form.attendance === 'yes' ? form.plusOne + 1 : 0,
         }),
@@ -179,6 +183,36 @@ export default function RSVPSection() {
                 />
                 {errors.name && (
                   <p className="mt-1.5 text-xs text-burgundy font-lato">{errors.name}</p>
+                )}
+              </div>
+
+              {/* guest side */}
+              <div>
+                <label className="block font-lato text-xs tracking-widest uppercase text-charcoal-light mb-3">
+                  Ում հյուրն եք <span className="text-burgundy">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {([
+                    { value: 'gevorg', label: 'Գևորգի', emoji: '🤵🏻‍♂️' },
+                    { value: 'sveta',  label: 'Սվետայի', emoji: '👰🏻‍♀️' },
+                  ] as const).map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => set('guestSide', opt.value)}
+                      className={`px-4 py-3.5 rounded-xl border text-sm font-lato transition-all duration-200 flex items-center justify-center gap-2 ${
+                        form.guestSide === opt.value
+                          ? 'bg-gold text-charcoal border-gold shadow-md'
+                          : 'bg-white border-gold/30 text-charcoal hover:border-gold/60 hover:bg-ivory-dark'
+                      }`}
+                    >
+                      <span>{opt.emoji}</span>
+                      <span>{opt.label}</span>
+                    </button>
+                  ))}
+                </div>
+                {errors.guestSide && (
+                  <p className="mt-1.5 text-xs text-burgundy font-lato">{errors.guestSide}</p>
                 )}
               </div>
 

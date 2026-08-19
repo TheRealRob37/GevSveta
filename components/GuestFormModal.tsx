@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
-import type { GuestStatus, RsvpEntry } from '@/lib/rsvpStore'
+import type { GuestStatus, GuestSide, RsvpEntry } from '@/lib/rsvpStore'
 
 export interface GuestFormValues {
-  name:   string
-  status: GuestStatus
-  guests: number
+  name:      string
+  status:    GuestStatus
+  guests:    number
+  guestSide: GuestSide
 }
 
 export default function GuestFormModal({ guest, onSave, onClose }: {
@@ -17,9 +18,10 @@ export default function GuestFormModal({ guest, onSave, onClose }: {
   onClose: () => void
 }) {
   const [values, setValues] = useState<GuestFormValues>({
-    name:   guest?.name ?? '',
-    status: guest?.status ?? 'attending',
-    guests: guest?.guests ?? 1,
+    name:      guest?.name ?? '',
+    status:    guest?.status ?? 'attending',
+    guests:    guest?.guests ?? 1,
+    guestSide: guest?.guestSide ?? 'gevorg',
   })
   const [saving, setSaving] = useState(false)
   const [error, setError]   = useState('')
@@ -81,6 +83,32 @@ export default function GuestFormModal({ guest, onSave, onClose }: {
               className="input-elegant"
               autoFocus
             />
+          </div>
+
+          <div>
+            <label className="block font-lato text-xs tracking-widest uppercase text-charcoal-light mb-2">
+              Ում հյուրն է
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {([
+                { value: 'gevorg', label: 'Գևորգի', emoji: '🤵🏻‍♂️' },
+                { value: 'sveta',  label: 'Սվետայի', emoji: '👰🏻‍♀️' },
+              ] as const).map(opt => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setValues(v => ({ ...v, guestSide: opt.value }))}
+                  className={`px-3 py-2.5 rounded-xl border text-sm font-lato transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                    values.guestSide === opt.value
+                      ? 'bg-gold text-charcoal border-gold shadow-md'
+                      : 'bg-white border-gold/30 text-charcoal hover:border-gold/60'
+                  }`}
+                >
+                  <span>{opt.emoji}</span>
+                  <span>{opt.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <div>

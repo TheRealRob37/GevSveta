@@ -8,11 +8,17 @@ import {
   Search, Plus, Pencil, Trash2, FileDown,
 } from 'lucide-react'
 import { COUPLE_NAMES } from '@/lib/constants'
-import type { RsvpEntry, GuestStatus } from '@/lib/rsvpStore'
+import type { RsvpEntry, GuestStatus, GuestSide } from '@/lib/rsvpStore'
 import GuestFormModal, { type GuestFormValues } from '@/components/GuestFormModal'
 
 const POLL_INTERVAL_MS = 20_000
 type StatusFilter = 'all' | GuestStatus
+type SideFilter = 'all' | GuestSide
+
+const SIDE_LABEL: Record<GuestSide, string> = {
+  gevorg: '🤵🏻‍♂️ Գևորգի',
+  sveta:  '👰🏻‍♀️ Սվետայի',
+}
 
 function StatCard({ label, value, icon: Icon, tone }: {
   label: string; value: number; icon: typeof Users; tone: 'sage' | 'burgundy' | 'gold'
@@ -76,6 +82,7 @@ export default function AdminDashboardPage() {
   const [error, setError]     = useState('')
   const [search, setSearch]   = useState('')
   const [filter, setFilter]   = useState<StatusFilter>('all')
+  const [sideFilter, setSideFilter] = useState<SideFilter>('all')
   const [modalGuest, setModalGuest] = useState<RsvpEntry | 'new' | null>(null)
   const [busyId, setBusyId]   = useState<string | null>(null)
   const [exporting, setExporting] = useState(false)
@@ -167,12 +174,15 @@ export default function AdminDashboardPage() {
   const filtered = useMemo(() => {
     return entries
       .filter(e => filter === 'all' || e.status === filter)
+      .filter(e => sideFilter === 'all' || e.guestSide === sideFilter)
       .filter(e => e.name.toLowerCase().includes(search.trim().toLowerCase()))
-  }, [entries, filter, search])
+  }, [entries, filter, sideFilter, search])
 
   const attending = entries.filter(e => e.status === 'attending')
   const declined  = entries.filter(e => e.status === 'declined')
   const totalGuests = attending.reduce((sum, e) => sum + e.guests, 0)
+  const gevorgGuests = attending.filter(e => e.guestSide === 'gevorg').reduce((sum, e) => sum + e.guests, 0)
+  const svetaGuests  = attending.filter(e => e.guestSide === 'sveta').reduce((sum, e) => sum + e.guests, 0)
 
   return (
     <main className="min-h-screen bg-ivory-dark px-6 py-12">
@@ -198,10 +208,14 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* summary cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <StatCard label="Ընդհանուր Հրավիրված" value={entries.length} icon={ListChecks} tone="gold" />
           <StatCard label="Ներկա Կլինեն (հյուրերի հետ)" value={totalGuests} icon={CheckCircle2} tone="sage" />
           <StatCard label="Հրաժարված" value={declined.length} icon={XCircle} tone="burgundy" />
+        </div>
+        <div className="grid grid-cols-2 gap-4 mb-10">
+          <StatCard label="🤵🏻‍♂️ Գևորգի Հյուրեր" value={gevorgGuests} icon={Users} tone="gold" />
+          <StatCard label="👰🏻‍♀️ Սվետայի Հյուրեր" value={svetaGuests} icon={Users} tone="gold" />
         </div>
 
         {/* toolbar */}
@@ -228,6 +242,24 @@ export default function AdminDashboardPage() {
                 onClick={() => setFilter(opt.value)}
                 className={`px-3 py-2 rounded-lg text-xs font-lato tracking-wide whitespace-nowrap transition-all duration-200 ${
                   filter === opt.value ? 'bg-gold text-charcoal' : 'text-charcoal-light hover:bg-ivory-dark'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1.5 bg-white/70 border border-gold/20 rounded-xl p-1">
+            {([
+              { value: 'all', label: 'Բոլորը' },
+              { value: 'gevorg', label: '🤵🏻‍♂️ Գևորգի' },
+              { value: 'sveta', label: '👰🏻‍♀️ Սվետայի' },
+            ] as const).map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => setSideFilter(opt.value)}
+                className={`px-3 py-2 rounded-lg text-xs font-lato tracking-wide whitespace-nowrap transition-all duration-200 ${
+                  sideFilter === opt.value ? 'bg-gold text-charcoal' : 'text-charcoal-light hover:bg-ivory-dark'
                 }`}
               >
                 {opt.label}
@@ -267,6 +299,7 @@ export default function AdminDashboardPage() {
                 <thead>
                   <tr className="border-b border-gold/20">
                     <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light">Անուն</th>
+                    <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light">Կողմը</th>
                     <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light">Կարգավիճակ</th>
                     <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light">Հյուրեր</th>
                     <th className="px-6 py-4 font-lato text-xs tracking-widest uppercase text-charcoal-light text-right">Գործողություններ</th>
@@ -276,6 +309,7 @@ export default function AdminDashboardPage() {
                   {[...filtered].reverse().map(entry => (
                     <tr key={entry.id} className="border-b border-gold/10 last:border-0">
                       <td className="px-6 py-4 font-lato text-sm text-charcoal">{entry.name}</td>
+                      <td className="px-6 py-4 font-lato text-sm text-charcoal-light">{SIDE_LABEL[entry.guestSide]}</td>
                       <td className="px-6 py-4">
                         <select
                           value={entry.status}
@@ -331,6 +365,7 @@ export default function AdminDashboardPage() {
             <thead>
               <tr>
                 <th className="border-b border-charcoal/20 py-2 pr-4 text-xs uppercase tracking-widest text-charcoal-light">Անուն</th>
+                <th className="border-b border-charcoal/20 py-2 pr-4 text-xs uppercase tracking-widest text-charcoal-light">Կողմը</th>
                 <th className="border-b border-charcoal/20 py-2 pr-4 text-xs uppercase tracking-widest text-charcoal-light">Կարգավիճակ</th>
                 <th className="border-b border-charcoal/20 py-2 text-xs uppercase tracking-widest text-charcoal-light">Հյուրեր</th>
               </tr>
@@ -339,6 +374,7 @@ export default function AdminDashboardPage() {
               {[...filtered].reverse().map(entry => (
                 <tr key={entry.id}>
                   <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">{entry.name}</td>
+                  <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">{SIDE_LABEL[entry.guestSide]}</td>
                   <td className="border-b border-charcoal/10 py-2 pr-4 text-sm text-charcoal">
                     {entry.status === 'attending' ? 'Ներկա կլինի' : 'Չի կարող'}
                   </td>

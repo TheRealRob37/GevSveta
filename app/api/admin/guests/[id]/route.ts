@@ -21,6 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   if (typeof body.name === 'string' && body.name.trim()) patch.name = body.name.trim()
   if (body.status === 'attending' || body.status === 'declined') patch.status = body.status
   if (typeof body.guests === 'number') patch.guests = Math.max(0, body.guests)
+  if (body.guestSide === 'gevorg' || body.guestSide === 'sveta') patch.guestSide = body.guestSide
 
   if (Object.keys(patch).length === 0) {
     return NextResponse.json({ error: 'no valid fields to update' }, { status: 400 })

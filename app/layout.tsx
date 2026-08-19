@@ -1,6 +1,31 @@
 import type { Metadata, Viewport } from 'next'
+import { Noto_Serif_Armenian, Noto_Sans_Armenian } from 'next/font/google'
 import './globals.css'
-import { COUPLE_NAMES, EVENT_TITLE, EVENT_DATE_DISPLAY, VENUE_LOCATION } from '@/lib/constants'
+import { COUPLE_NAMES, EVENT_TITLE, EVENT_DATE_DISPLAY } from '@/lib/constants'
+
+// Playfair Display / Cormorant Garamond (loaded in globals.css) have no
+// Armenian glyphs at all, so every Armenian character on the site was
+// silently falling back to the browser's generic system serif — which
+// varies by OS/device and can render distorted in italic/bold. These are
+// self-hosted via next/font (no extra request, no FOIT/CLS) and exposed
+// as CSS variables that the Tailwind font stacks fall back to before any
+// generic serif/sans-serif.
+const notoSerifArmenian = Noto_Serif_Armenian({
+  // 'latin' covers digits/punctuation too, so numbers (dates, times) render
+  // in the same font family as the surrounding Armenian text instead of
+  // falling through to Georgia/serif and looking visually mismatched.
+  subsets: ['armenian', 'latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-noto-serif-armenian',
+})
+
+const notoSansArmenian = Noto_Sans_Armenian({
+  subsets: ['armenian', 'latin'],
+  weight: ['300', '400', '700'],
+  display: 'swap',
+  variable: '--font-noto-sans-armenian',
+})
 
 // VERCEL_URL points at the per-deployment hash URL, which Vercel's
 // Deployment Protection gates behind an SSO login — external crawlers
@@ -20,7 +45,7 @@ export const viewport: Viewport = {
 }
 
 const PAGE_TITLE = `Սիրով հրավիրում ենք — ${COUPLE_NAMES}`
-const PAGE_DESCRIPTION = `${EVENT_DATE_DISPLAY} • ${VENUE_LOCATION} — ${COUPLE_NAMES} ${EVENT_TITLE.toLowerCase()}`
+const PAGE_DESCRIPTION = `${EVENT_DATE_DISPLAY} • ${COUPLE_NAMES} ${EVENT_TITLE.toLowerCase()}`
 
 // A version tag on the image URL — bump this whenever og-image.jpg changes.
 // Chat apps (Telegram, WhatsApp/Meta) cache link previews per-URL, so an
@@ -66,7 +91,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="hy">
+    <html lang="hy" className={`${notoSerifArmenian.variable} ${notoSansArmenian.variable}`}>
       <body>{children}</body>
     </html>
   )

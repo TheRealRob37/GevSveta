@@ -22,9 +22,18 @@ module.exports = {
         'charcoal-light': '#4A3E3D',
       },
       fontFamily: {
-        playfair:   ['Playfair Display', 'Noto Serif Armenian', 'Georgia', 'serif'],
-        cormorant:  ['Cormorant Garamond', 'Noto Serif Armenian', 'Georgia', 'serif'],
-        lato:       ['Lato', 'Noto Sans Armenian', 'system-ui', 'sans-serif'],
+        // Noto Serif/Sans Armenian go FIRST, not as a fallback. Cormorant
+        // Garamond and Playfair Display are real Latin webfonts with their
+        // own digit glyphs, so with them first, "2026"/"15" would render in
+        // their plain numeral design while the surrounding Armenian letters
+        // (which those fonts don't cover at all) skip straight to Noto —
+        // two mismatched type designs stitched into one sentence. Putting
+        // Noto first makes it own both letters and digits for consistency;
+        // Playfair/Cormorant remain as fallback for the rare pure-Latin
+        // fragment (still one unified look either way).
+        playfair:   ['var(--font-noto-serif-armenian)', 'Playfair Display', 'Georgia', 'serif'],
+        cormorant:  ['var(--font-noto-serif-armenian)', 'Cormorant Garamond', 'Georgia', 'serif'],
+        lato:       ['var(--font-noto-sans-armenian)', 'Lato', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gold-gradient': 'linear-gradient(135deg, #C9A96E 0%, #E8D5B0 50%, #C9A96E 100%)',

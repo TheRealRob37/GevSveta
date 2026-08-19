@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { MapPin, Clock, Map } from 'lucide-react'
+import { MapPin, Clock, Map, Heart } from 'lucide-react'
 import { VENUE_NAME, VENUE_MAP_URL, VENUE_TIME } from '@/lib/constants'
 
 function useReveal(threshold = 0.15) {
@@ -66,9 +66,7 @@ function CalendarCard() {
             <div key={i} className="aspect-square flex items-center justify-center">
               {day === null ? null : day === HIGHLIGHT_DAY ? (
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gold/25 flex items-center justify-center">
-                  <span className="font-playfair text-[11px] sm:text-xs text-charcoal font-semibold leading-none">
-                    {day}
-                  </span>
+                  <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-burgundy fill-burgundy" />
                 </div>
               ) : (
                 <span className="font-lato text-xs sm:text-sm text-charcoal-light">{day}</span>

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { GROOM_NAME, BRIDE_NAME, EVENT_TYPE } from '@/lib/constants'
+import { GROOM_NAME, BRIDE_NAME, EVENT_DATE_DISPLAY } from '@/lib/constants'
 
 const fadeUp = (delay = 0) => ({
   initial:  { opacity: 0, y: 30 },
@@ -45,16 +45,9 @@ export default function HeroSection() {
       {/* content */}
       <div className="relative z-10 flex flex-col items-center text-center px-6 py-16 sm:py-20 max-w-3xl mx-auto w-full">
 
-        {/* floral ornament top */}
-        <motion.div {...fadeUp(0.1)} className="mb-6">
-          <span className="font-cormorant italic text-[#C9995F] text-lg tracking-[0.3em]">
-            ✦ {EVENT_TYPE} ✦
-          </span>
-        </motion.div>
-
         {/* couple names */}
         <motion.div {...fadeUp(0.3)} className="mb-4">
-          <h1 className="font-playfair text-5xl sm:text-7xl md:text-9xl text-[#FFE4C4] leading-none tracking-tight">
+          <h1 className="font-playfair text-5xl sm:text-7xl md:text-9xl text-[#FFE4C4] leading-none tracking-normal">
             {GROOM_NAME}
           </h1>
         </motion.div>
@@ -67,10 +60,16 @@ export default function HeroSection() {
           </div>
         </motion.div>
 
-        <motion.div {...fadeUp(0.55)}>
-          <h1 className="font-playfair text-5xl sm:text-7xl md:text-9xl text-[#FFE4C4] leading-none tracking-tight">
+        <motion.div {...fadeUp(0.55)} className="mb-8">
+          <h1 className="font-playfair text-5xl sm:text-7xl md:text-9xl text-[#FFE4C4] leading-none tracking-normal">
             {BRIDE_NAME}
           </h1>
+        </motion.div>
+
+        <motion.div {...fadeUp(0.7)}>
+          <p className="font-cormorant italic text-[#C9995F] text-xl sm:text-2xl tracking-wider tabular-nums">
+            {EVENT_DATE_DISPLAY}
+          </p>
         </motion.div>
       </div>
 

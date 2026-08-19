@@ -152,7 +152,7 @@ export default function RSVPSection() {
               Մասնակցության Հաստատում
             </h2>
             <p className="font-cormorant italic text-charcoal-light text-lg leading-relaxed">
-              Խնդրում ենք հաստատել Ձեր մասնակցությունը մինչև 2026թ. սեպտեմբերի 15-ը:
+              Խնդրում ենք հաստատել Ձեր մասնակցությունը մինչև 2026թ. հոկտեմբերի 20-ը:
             </p>
             <div className="w-16 h-px bg-gold/40 mx-auto mt-6" />
           </motion.div>

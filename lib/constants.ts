@@ -7,7 +7,7 @@ export const COUPLE_NAMES = `${GROOM_NAME} & ${BRIDE_NAME}`
 export const EVENT_TYPE = 'Նշանադրություն'
 export const EVENT_TITLE = 'Նշանադրության Հրավեր'
 
-export const EVENT_DATE_DISPLAY = 'Նոյեմբերի 7, 2026'
+export const EVENT_DATE_DISPLAY = '07/11/2026'
 
 export const VENUE_NAME = '«Felice» Ռեստորան'
 export const VENUE_LOCATION = 'Ջրվեժ'

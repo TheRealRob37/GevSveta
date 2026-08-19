@@ -3,8 +3,8 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { UtensilsCrossed, MapPin, Clock, Map } from 'lucide-react'
-import { VENUE_NAME, VENUE_ADDRESS, VENUE_MAP_URL, VENUE_TIME } from '@/lib/constants'
+import { MapPin, Clock, Map } from 'lucide-react'
+import { VENUE_NAME, VENUE_MAP_URL, VENUE_TIME } from '@/lib/constants'
 
 function useReveal(threshold = 0.15) {
   const ref = useRef(null)
@@ -13,11 +13,8 @@ function useReveal(threshold = 0.15) {
 }
 
 const EVENT = {
-  icon:    UtensilsCrossed,
   time:    VENUE_TIME,
-  label:   'Ընթրիք',
   title:   VENUE_NAME,
-  address: VENUE_ADDRESS,
   note:    'Տոնական երեկո, ջերմ մթնոլորտ և բարձր տրամադրություն',
   mapUrl:  VENUE_MAP_URL,
 }
@@ -87,7 +84,6 @@ function CalendarCard() {
 export default function ScheduleSection() {
   const { ref: titleRef, inView: titleInView } = useReveal()
   const { ref: eventRef, inView: eventInView } = useReveal()
-  const Icon = EVENT.icon
 
   return (
     <section className="relative py-24 sm:py-32 bg-ivory-dark overflow-hidden">
@@ -113,11 +109,8 @@ export default function ScheduleSection() {
           transition={{ duration: 0.7 }}
           className="text-center mb-20"
         >
-          <span className="font-lato text-xs tracking-[0.4em] uppercase text-gold-dark">
-            Ծրագիր
-          </span>
-          <h2 className="font-playfair text-4xl sm:text-5xl text-charcoal mt-3 mb-6">
-            Տոնի Ժամանակացույց
+          <h2 className="font-playfair text-4xl sm:text-5xl text-charcoal mb-6">
+            Հանդիսավոր Ընթրիք
           </h2>
           <div className="w-16 h-px bg-gold/40 mx-auto" />
         </motion.div>
@@ -131,42 +124,29 @@ export default function ScheduleSection() {
           className="flex flex-col sm:flex-row items-stretch gap-6"
         >
           {/* venue card */}
-          <div className="flex-1 card-elegant rounded-2xl shadow-md border border-amber-200/40 p-7 sm:p-8">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-gold/10 text-gold-dark">
-                <Icon className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="font-lato text-[11px] tracking-widest uppercase px-2.5 py-0.5 rounded-full bg-gold/10 text-gold-dark">
-                  {EVENT.label}
-                </span>
-                <h3 className="font-playfair text-xl sm:text-2xl text-charcoal mt-2 mb-2 leading-snug">
-                  {EVENT.title}
-                </h3>
-                <p className="font-cormorant italic text-charcoal-light text-base mb-4 leading-relaxed">
-                  {EVENT.note}
-                </p>
+          <div className="flex-1 card-elegant rounded-2xl shadow-md border border-amber-200/40 p-7 sm:p-8 flex flex-col items-center text-center">
+            <h3 className="flex items-center justify-center gap-1.5 font-playfair text-xl sm:text-2xl text-charcoal mb-2 leading-snug">
+              <MapPin className="w-4 h-4 text-gold flex-shrink-0" />
+              {EVENT.title}
+            </h3>
+            <p className="font-cormorant italic text-charcoal-light text-base mb-4 leading-relaxed max-w-xs">
+              {EVENT.note}
+            </p>
 
-                <div className="flex items-center gap-1.5 text-charcoal-light text-sm mb-2.5">
-                  <MapPin className="w-3.5 h-3.5 text-gold flex-shrink-0" />
-                  <span className="font-lato text-xs">{EVENT.address}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-charcoal mb-5">
-                  <Clock className="w-4 h-4 text-gold-dark flex-shrink-0" />
-                  <span className="font-lato text-base font-bold">Ժամը {EVENT.time}-ին</span>
-                </div>
-
-                <a
-                  href={EVENT.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-xs font-lato font-semibold tracking-wider uppercase rounded-full px-5 py-2.5 transition-all duration-300 bg-gold/15 text-gold-dark hover:bg-gold hover:text-charcoal shadow-sm"
-                >
-                  <Map className="w-3.5 h-3.5" />
-                  Բացել Քարտեզում
-                </a>
-              </div>
+            <div className="flex items-center justify-center gap-1.5 text-charcoal mb-5">
+              <Clock className="w-4 h-4 text-gold-dark flex-shrink-0" />
+              <span className="font-lato text-base font-bold">Ժամը {EVENT.time}-ին</span>
             </div>
+
+            <a
+              href={EVENT.mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-xs font-lato font-semibold tracking-wider uppercase rounded-full px-5 py-2.5 transition-all duration-300 bg-gold/15 text-gold-dark hover:bg-gold hover:text-charcoal shadow-sm"
+            >
+              <Map className="w-3.5 h-3.5" />
+              Բացել Քարտեզում
+            </a>
           </div>
 
           {/* calendar card */}

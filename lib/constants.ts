@@ -11,6 +11,5 @@ export const EVENT_DATE_DISPLAY = 'Նոյեմբերի 7, 2026'
 
 export const VENUE_NAME = '«Felice» Ռեստորան'
 export const VENUE_LOCATION = 'Ջրվեժ'
-export const VENUE_ADDRESS = 'Ռեստորան Felice, Ջրվեժ'
 export const VENUE_MAP_URL = 'https://yandex.com/maps/org/felichi/217656861365/?ll=44.587816%2C40.192022&z=16.63'
 export const VENUE_TIME = '18:00'

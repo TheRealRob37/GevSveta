@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { CheckCircle, Users, ChevronDown } from 'lucide-react'
-import { RSVP_DEADLINE } from '@/lib/constants'
 
 interface FormData {
   name:       string
@@ -134,15 +133,11 @@ export default function RSVPSection() {
             transition={{ duration: 0.7 }}
             className="text-center mb-14"
           >
-            <span className="font-lato text-xs tracking-[0.4em] uppercase text-gold-dark">
-              Հաստատում
-            </span>
-            <h2 className="font-playfair text-4xl sm:text-5xl text-charcoal mt-3 mb-4">
+            <h2 className="font-playfair text-4xl sm:text-5xl text-charcoal mb-4">
               Մասնակցության Հաստատում
             </h2>
-            <p className="font-cormorant italic text-charcoal-light text-lg">
-              Խնդրում ենք հաստատել ներկայությունը մինչեւ
-              <strong className="text-charcoal not-italic"> {RSVP_DEADLINE}</strong>
+            <p className="font-cormorant italic text-charcoal-light text-lg leading-relaxed">
+              Խնդրում ենք հաստատել Ձեր մասնակցությունը մինչև 2026թ. սեպտեմբերի 15-ը:
             </p>
             <div className="w-16 h-px bg-gold/40 mx-auto mt-6" />
           </motion.div>

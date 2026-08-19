@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import SecretAdminTrigger from './SecretAdminTrigger'
 
 export default function FooterSection() {
   return (
@@ -14,7 +15,7 @@ export default function FooterSection() {
         transition={{ duration: 0.8 }}
         className="relative font-cormorant italic text-ivory text-2xl sm:text-3xl text-center px-6"
       >
-        Սիրով սպասում ենք Ձեզ
+        <SecretAdminTrigger>Սիրով սպասում ենք Ձեզ</SecretAdminTrigger>
       </motion.p>
     </footer>
   )

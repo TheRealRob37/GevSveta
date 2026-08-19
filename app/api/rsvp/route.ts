@@ -15,9 +15,9 @@ export async function POST(req: NextRequest) {
   }
 
   const entry = await addRsvp({
-    name:       body.name.trim(),
-    attendance: body.attendance,
-    guests:     body.attendance === 'yes' ? Math.max(1, body.guests) : 0,
+    name:   body.name.trim(),
+    status: body.attendance === 'yes' ? 'attending' : 'declined',
+    guests: body.attendance === 'yes' ? Math.max(1, body.guests) : 0,
   })
 
   return NextResponse.json(entry, { status: 201 })

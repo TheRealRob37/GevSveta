@@ -22,9 +22,9 @@ module.exports = {
         'charcoal-light': '#4A3E3D',
       },
       fontFamily: {
-        playfair:   ['Playfair Display', 'Georgia', 'serif'],
-        cormorant:  ['Cormorant Garamond', 'Georgia', 'serif'],
-        lato:       ['Lato', 'system-ui', 'sans-serif'],
+        playfair:   ['Playfair Display', 'Noto Serif Armenian', 'Georgia', 'serif'],
+        cormorant:  ['Cormorant Garamond', 'Noto Serif Armenian', 'Georgia', 'serif'],
+        lato:       ['Lato', 'Noto Sans Armenian', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gold-gradient': 'linear-gradient(135deg, #C9A96E 0%, #E8D5B0 50%, #C9A96E 100%)',

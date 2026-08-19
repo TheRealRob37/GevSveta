@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { CheckCircle, Users, ChevronDown } from 'lucide-react'
-import { RSVP_DEADLINE } from '@/lib/constants'
+import confetti from 'canvas-confetti'
 
 interface FormData {
   name:       string
@@ -17,6 +17,15 @@ const INITIAL: FormData = {
   name:       '',
   attendance: '',
   plusOne:    0,
+}
+
+function fireConfetti() {
+  const colors = ['#FFE4C4', '#C9995F', '#5E2A2E', '#FDFBF7']
+  const shared = { colors, disableForReducedMotion: true }
+
+  confetti({ ...shared, particleCount: 80, spread: 70, origin: { x: 0.2, y: 0.6 } })
+  confetti({ ...shared, particleCount: 80, spread: 70, origin: { x: 0.8, y: 0.6 } })
+  confetti({ ...shared, particleCount: 60, spread: 100, startVelocity: 45, origin: { x: 0.5, y: 0.5 } })
 }
 
 function SuccessModal({ name, onClose }: { name: string; onClose: () => void }) {
@@ -98,6 +107,7 @@ export default function RSVPSection() {
         }),
       })
       if (!res.ok) throw new Error('request failed')
+      if (form.attendance === 'yes') fireConfetti()
       setSubmitted(true)
     } catch {
       setSubmitError('Ինչ-որ բան այն չգնաց։ Խնդրում ենք փորձել կրկին։')
@@ -134,15 +144,11 @@ export default function RSVPSection() {
             transition={{ duration: 0.7 }}
             className="text-center mb-14"
           >
-            <span className="font-lato text-xs tracking-[0.4em] uppercase text-gold-dark">
-              Հաստատում
-            </span>
-            <h2 className="font-playfair text-4xl sm:text-5xl text-charcoal mt-3 mb-4">
+            <h2 className="font-playfair text-4xl sm:text-5xl text-charcoal mb-4">
               Մասնակցության Հաստատում
             </h2>
-            <p className="font-cormorant italic text-charcoal-light text-lg">
-              Խնդրում ենք հաստատել ներկայությունը մինչեւ
-              <strong className="text-charcoal not-italic"> {RSVP_DEADLINE}</strong>
+            <p className="font-cormorant italic text-charcoal-light text-lg leading-relaxed">
+              Խնդրում ենք հաստատել Ձեր մասնակցությունը մինչև 2026թ. սեպտեմբերի 15-ը:
             </p>
             <div className="w-16 h-px bg-gold/40 mx-auto mt-6" />
           </motion.div>

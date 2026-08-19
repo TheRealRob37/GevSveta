@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock } from 'lucide-react'
@@ -16,13 +16,24 @@ export default function SecretAdminTrigger({ children, className }: {
   className?: string
 }) {
   const router = useRouter()
-  const tapCount  = useRef(0)
-  const tapTimer  = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const tapCount   = useRef(0)
+  const tapTimer   = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const mounted    = useRef(true)
   const [pulsing, setPulsing]   = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [password, setPassword] = useState('')
   const [error, setError]       = useState('')
   const [loading, setLoading]   = useState(false)
+
+  useEffect(() => {
+    mounted.current = true
+    return () => {
+      mounted.current = false
+      if (tapTimer.current) clearTimeout(tapTimer.current)
+      if (pulseTimer.current) clearTimeout(pulseTimer.current)
+    }
+  }, [])
 
   function handleTap() {
     tapCount.current += 1
@@ -39,16 +50,20 @@ export default function SecretAdminTrigger({ children, className }: {
   async function triggerAccess() {
     setPulsing(true)
     if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(40)
-    setTimeout(() => setPulsing(false), 500)
+    if (pulseTimer.current) clearTimeout(pulseTimer.current)
+    pulseTimer.current = setTimeout(() => {
+      if (mounted.current) setPulsing(false)
+    }, 500)
 
     try {
       const res = await fetch('/api/rsvp', { cache: 'no-store' })
+      if (!mounted.current) return
       if (res.status === 200) {
         router.push('/admin')
         return
       }
     } catch {}
-    setShowModal(true)
+    if (mounted.current) setShowModal(true)
   }
 
   async function handleSubmit(e: React.FormEvent) {

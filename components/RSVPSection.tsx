@@ -190,7 +190,7 @@ export default function RSVPSection() {
                 <div className="grid grid-cols-2 gap-3">
                   {([
                     { value: 'yes', label: 'Ներկա կլինեմ', emoji: '🥂' },
-                    { value: 'no',  label: 'Ցավոք, չեմ կարող', emoji: '💌' },
+                    { value: 'no',  label: 'Ցավոք, չեմ կարող', emoji: '🙏' },
                   ] as const).map(opt => (
                     <button
                       key={opt.value}

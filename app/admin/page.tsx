@@ -80,12 +80,13 @@ export default function AdminDashboardPage() {
   const [busyId, setBusyId]   = useState<string | null>(null)
   const [exporting, setExporting] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
+  const loggingOut = useRef(false)
 
   const load = useCallback(async () => {
     try {
       const res = await fetch('/api/rsvp', { cache: 'no-store' })
       if (res.status === 401) {
-        router.push('/admin/login')
+        if (!loggingOut.current) router.push('/admin/login')
         return
       }
       if (!res.ok) throw new Error('failed')
@@ -105,10 +106,14 @@ export default function AdminDashboardPage() {
   }, [load])
 
   async function handleLogout() {
+    loggingOut.current = true
     await fetch('/api/admin/logout', { method: 'POST' })
-    // hard navigation — avoids any stale client-router cache carrying over
-    // the just-cleared session state
-    window.location.href = '/'
+    // hard navigation to the current origin's homepage — avoids any stale
+    // client-router cache carrying over the just-cleared session state,
+    // and window.location.origin guarantees we land on whichever domain
+    // (gevsveta.com, www.gevsveta.com, preview URL, localhost) is actually
+    // serving this page rather than relying on relative-path resolution.
+    window.location.href = window.location.origin + '/'
   }
 
   async function handleSaveGuest(values: GuestFormValues) {

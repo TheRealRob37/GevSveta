@@ -370,7 +370,7 @@ export default function RSVPSection() {
                     Ուղարկվում է…
                   </span>
                 ) : (
-                  'Հաստատել Ներկայությունը'
+                  'Հաստատել'
                 )}
               </motion.button>
 
